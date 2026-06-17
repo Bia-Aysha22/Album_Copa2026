@@ -17,11 +17,20 @@ import {
   type FilterMode,
 } from "@/utils/collection";
 
-const GROUP_IDS = [...albumGroups.map((group) => group.id), "COCA", "FWC"];
+const TABS = [
+  ...albumGroups.map((group) => ({
+    id: group.id,
+    label: `${group.countries[0]?.flag ?? ""} ${group.name}`.trim(),
+  })),
+  { id: "COCA", label: "🥤 Coca-Cola" },
+  { id: "FWC", label: "FWC" },
+];
+
+const DEFAULT_GROUP = albumGroups[0]?.id ?? "COCA";
 
 export default function Home() {
   const { collection, cycleSticker, updateQuantity, resetCollection } = useAlbumStore();
-  const [activeGroup, setActiveGroup] = useState("A");
+  const [activeGroup, setActiveGroup] = useState(DEFAULT_GROUP);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterMode>("all");
   const [openEditorId, setOpenEditorId] = useState<string | null>(null);
@@ -156,7 +165,7 @@ export default function Home() {
 
         <section className="sticky top-3 z-20 rounded-[28px] border border-white/10 bg-slate-950/75 p-3 backdrop-blur">
           <GroupTabs
-            groups={GROUP_IDS}
+            tabs={TABS}
             activeGroup={activeGroup}
             onChange={(groupId) => {
               setActiveGroup(groupId);

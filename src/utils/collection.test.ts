@@ -13,8 +13,8 @@ const stickers: StickerDefinition[] = [
   {
     id: "BRA1",
     code: "BRA1",
-    label: "Escudo",
-    kind: "badge",
+    label: "Alisson",
+    kind: "player",
     order: 1,
     countryCode: "BRA",
     countryName: "Brasil",

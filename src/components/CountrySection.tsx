@@ -27,7 +27,7 @@ export function CountrySection({
     <section className="rounded-[30px] border border-white/10 bg-slate-900/70 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{`Grupo ${country.groupId}`}</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Seleção</p>
           <h2 className="mt-2 text-xl font-semibold text-white">
             <span className="mr-2">{country.flag}</span>
             {country.namePtBr}
@@ -35,7 +35,7 @@ export function CountrySection({
         </div>
 
         <div className="text-right text-sm text-slate-300">
-          <p>{stats.owned} de 20 marcadas</p>
+          <p>{stats.owned} de {country.stickers.length} marcadas</p>
           <p className="text-xs text-slate-500">{stats.duplicates} repetidas</p>
         </div>
       </div>
