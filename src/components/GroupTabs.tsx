@@ -24,7 +24,11 @@ export function GroupTabs({ groups, activeGroup, onChange }: GroupTabsProps) {
                 : "border-white/10 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-white",
             )}
           >
-            {groupId === "COCA" ? "Coca-Cola" : `Grupo ${groupId}`}
+            {groupId === "COCA"
+              ? "Coca-Cola"
+              : groupId === "FWC"
+                ? "FWC"
+                : `Grupo ${groupId}`}
           </button>
         );
       })}

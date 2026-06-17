@@ -1,6 +1,6 @@
 export type StickerStatus = "unset" | "owned" | "missing";
 
-export type StickerKind = "badge" | "player" | "team-photo" | "coca";
+export type StickerKind = "badge" | "player" | "team-photo" | "coca" | "fwc";
 
 export type StickerState = {
   status: StickerStatus;
@@ -233,7 +233,22 @@ export const cocaColaSection: StickerDefinition[] = COCA_COLA_PLAYERS.map((item,
   sectionId: "COCA",
 }));
 
+// Figurinhas históricas (FWC) — formato horizontal, exibidas após a Coca-Cola.
+// Os rótulos abaixo são provisórios; serão substituídos pelos nomes oficiais.
+const FWC_COUNT = 19;
+
+export const fwcSection: StickerDefinition[] = Array.from({ length: FWC_COUNT }, (_, index) => ({
+  id: `FWC${index + 1}`,
+  code: `FWC${index + 1}`,
+  label: `Histórica ${index + 1}`,
+  kind: "fwc",
+  order: index + 1,
+  groupId: "FWC",
+  sectionId: "FWC",
+}));
+
 export const allStickers = [
   ...albumGroups.flatMap((group) => group.countries.flatMap((country) => country.stickers)),
   ...cocaColaSection,
+  ...fwcSection,
 ];

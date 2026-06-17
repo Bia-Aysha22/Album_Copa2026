@@ -3,10 +3,11 @@ import { useMemo, useState } from "react";
 
 import { CocaSection } from "@/components/CocaSection";
 import { CountrySection } from "@/components/CountrySection";
+import { FwcSection } from "@/components/FwcSection";
 import { GroupTabs } from "@/components/GroupTabs";
 import { SearchFilters } from "@/components/SearchFilters";
 import { SummaryStats } from "@/components/SummaryStats";
-import { albumGroups, allStickers, cocaColaSection } from "@/data/albumCatalog";
+import { albumGroups, allStickers, cocaColaSection, fwcSection } from "@/data/albumCatalog";
 import { useAlbumStore } from "@/store/useAlbumStore";
 import {
   calculateAlbumStats,
@@ -16,7 +17,7 @@ import {
   type FilterMode,
 } from "@/utils/collection";
 
-const GROUP_IDS = [...albumGroups.map((group) => group.id), "COCA"];
+const GROUP_IDS = [...albumGroups.map((group) => group.id), "COCA", "FWC"];
 
 export default function Home() {
   const { collection, cycleSticker, updateQuantity, resetCollection } = useAlbumStore();
@@ -36,7 +37,7 @@ export default function Home() {
   );
 
   const filteredCountries = useMemo(() => {
-    if (!activeGroupData || activeGroup === "COCA") {
+    if (!activeGroupData || activeGroup === "COCA" || activeGroup === "FWC") {
       return [];
     }
 
@@ -64,6 +65,19 @@ export default function Home() {
   const filteredCoca = useMemo(
     () =>
       cocaColaSection.filter((sticker) => {
+        const currentState = normalizeState(collection[sticker.id]);
+
+        return (
+          matchesFilter(currentState.status, currentState.quantity, filter) &&
+          matchesSearch(sticker, search)
+        );
+      }),
+    [collection, filter, search],
+  );
+
+  const filteredFwc = useMemo(
+    () =>
+      fwcSection.filter((sticker) => {
         const currentState = normalizeState(collection[sticker.id]);
 
         return (
@@ -161,6 +175,15 @@ export default function Home() {
               onToggleEditor={handleToggleEditor}
               onUpdateQuantity={handleUpdateQuantity}
             />
+          ) : activeGroup === "FWC" ? (
+            <FwcSection
+              stickers={filteredFwc}
+              collection={collection}
+              openEditorId={openEditorId}
+              onCycle={handleCycle}
+              onToggleEditor={handleToggleEditor}
+              onUpdateQuantity={handleUpdateQuantity}
+            />
           ) : (
             filteredCountries.map((country) => (
               <CountrySection
@@ -176,7 +199,7 @@ export default function Home() {
             ))
           )}
 
-          {activeGroup !== "COCA" && filteredCountries.length === 0 ? (
+          {activeGroup !== "COCA" && activeGroup !== "FWC" && filteredCountries.length === 0 ? (
             <div className="rounded-[28px] border border-dashed border-white/10 bg-slate-950/50 px-6 py-10 text-center text-sm text-slate-400">
               Nenhuma figurinha desse grupo combina com a busca atual.
             </div>
@@ -185,6 +208,12 @@ export default function Home() {
           {activeGroup === "COCA" && filteredCoca.length === 0 ? (
             <div className="rounded-[28px] border border-dashed border-white/10 bg-slate-950/50 px-6 py-10 text-center text-sm text-slate-400">
               Nenhum card Coca-Cola combina com a busca atual.
+            </div>
+          ) : null}
+
+          {activeGroup === "FWC" && filteredFwc.length === 0 ? (
+            <div className="rounded-[28px] border border-dashed border-white/10 bg-slate-950/50 px-6 py-10 text-center text-sm text-slate-400">
+              Nenhuma figurinha histórica combina com a busca atual.
             </div>
           ) : null}
         </section>

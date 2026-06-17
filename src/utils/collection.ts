@@ -105,7 +105,11 @@ export function matchesSearch(sticker: StickerDefinition, searchTerm: string): b
     sticker.label,
     sticker.countryCode,
     sticker.countryName,
-    sticker.groupId === "COCA" ? "coca cola" : `grupo ${sticker.groupId}`,
+    sticker.groupId === "COCA"
+      ? "coca cola"
+      : sticker.groupId === "FWC"
+        ? "fwc historica histórica"
+        : `grupo ${sticker.groupId}`,
   ]
     .filter(Boolean)
     .join(" ")
