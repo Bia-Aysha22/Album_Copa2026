@@ -15,6 +15,9 @@ dist-ssr
 # Pasta duplicada do projeto (cópia acidental)
 /album-copa-2026/
 
+# Configuração local do Claude Code
+.claude/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
