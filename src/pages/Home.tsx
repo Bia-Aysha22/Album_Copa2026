@@ -18,10 +18,7 @@ import {
 } from "@/utils/collection";
 
 const TABS = [
-  ...albumGroups.map((group) => ({
-    id: group.id,
-    label: `${group.countries[0]?.flag ?? ""} ${group.name}`.trim(),
-  })),
+  ...albumGroups.map((group) => ({ id: group.id, label: group.name })),
   { id: "COCA", label: "🥤 Coca-Cola" },
   { id: "FWC", label: "FWC" },
 ];

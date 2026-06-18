@@ -27,7 +27,7 @@ export function CountrySection({
     <section className="rounded-[30px] border border-white/10 bg-slate-900/70 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Seleção</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{`Grupo ${country.groupId}`}</p>
           <h2 className="mt-2 text-xl font-semibold text-white">
             <span className="mr-2">{country.flag}</span>
             {country.namePtBr}

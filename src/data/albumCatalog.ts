@@ -1,6 +1,8 @@
+import rosterRaw from "../../jogadores.txt?raw";
+
 export type StickerStatus = "unset" | "owned" | "missing";
 
-export type StickerKind = "player" | "coca" | "fwc";
+export type StickerKind = "player" | "team" | "coca" | "fwc";
 
 export type StickerState = {
   status: StickerStatus;
@@ -34,830 +36,224 @@ export type GroupSection = {
   countries: CountrySection[];
 };
 
-type TeamSeed = {
+type TeamMeta = {
   code: string;
   namePtBr: string;
   flag: string;
-  players: string[];
 };
 
-// Cada seleção com seus jogadores reais, na ordem do álbum.
-// O id de cada figurinha é `${code}${posição}` (ex: BRA1, BRA2...).
-const TEAMS: TeamSeed[] = [
+type GroupMeta = {
+  id: string;
+  teams: TeamMeta[];
+};
+
+// Grupos A–L do álbum (códigos iguais aos do jogadores.txt).
+const GROUPS: GroupMeta[] = [
   {
-    code: "USA",
-    namePtBr: "Estados Unidos",
-    flag: "🇺🇸",
-    players: [
-      "Matt Turner",
-      "Chris Richards",
-      "Antonee Robinson",
-      "Sergiño Dest",
-      "Tim Ream",
-      "Weston McKennie",
-      "Tyler Adams",
-      "Yunus Musah",
-      "Gio Reyna",
-      "Christian Pulisic",
-      "Timothy Weah",
-      "Folarin Balogun",
+    id: "A",
+    teams: [
+      { code: "MEX", namePtBr: "México", flag: "🇲🇽" },
+      { code: "RSA", namePtBr: "África do Sul", flag: "🇿🇦" },
+      { code: "KOR", namePtBr: "Coreia do Sul", flag: "🇰🇷" },
+      { code: "CZE", namePtBr: "Tchéquia", flag: "🇨🇿" },
     ],
   },
   {
-    code: "MEX",
-    namePtBr: "México",
-    flag: "🇲🇽",
-    players: [
-      "Guillermo Ochoa",
-      "César Montes",
-      "Johan Vásquez",
-      "Jorge Sánchez",
-      "Edson Álvarez",
-      "Luis Chávez",
-      "Erick Sánchez",
-      "Orbelín Pineda",
-      "Santiago Giménez",
-      "Henry Martín",
-      "Uriel Antuna",
+    id: "B",
+    teams: [
+      { code: "CAN", namePtBr: "Canadá", flag: "🇨🇦" },
+      { code: "BIH", namePtBr: "Bósnia e Herzegovina", flag: "🇧🇦" },
+      { code: "QAT", namePtBr: "Catar", flag: "🇶🇦" },
+      { code: "SUI", namePtBr: "Suíça", flag: "🇨🇭" },
     ],
   },
   {
-    code: "CAN",
-    namePtBr: "Canadá",
-    flag: "🇨🇦",
-    players: [
-      "Maxime Crépeau",
-      "Alphonso Davies",
-      "Alistair Johnston",
-      "Kamal Miller",
-      "Stephen Eustáquio",
-      "Ismaël Koné",
-      "Jonathan Osorio",
-      "Jonathan David",
-      "Cyle Larin",
-      "Tajon Buchanan",
+    id: "C",
+    teams: [
+      { code: "BRA", namePtBr: "Brasil", flag: "🇧🇷" },
+      { code: "MAR", namePtBr: "Marrocos", flag: "🇲🇦" },
+      { code: "HTI", namePtBr: "Haiti", flag: "🇭🇹" },
+      { code: "SCO", namePtBr: "Escócia", flag: "🏴" },
     ],
   },
   {
-    code: "ARG",
-    namePtBr: "Argentina",
-    flag: "🇦🇷",
-    players: [
-      "Dibu Martínez",
-      "Franco Armani",
-      "Nahuel Molina",
-      "Cristian Romero",
-      "Nicolás Otamendi",
-      "Lisandro Martínez",
-      "Nicolás Tagliafico",
-      "Rodrigo De Paul",
-      "Enzo Fernández",
-      "Alexis Mac Allister",
-      "Leandro Paredes",
-      "Giovani Lo Celso",
-      "Lionel Messi",
-      "Ángel Di María",
-      "Lautaro Martínez",
-      "Julián Álvarez",
+    id: "D",
+    teams: [
+      { code: "USA", namePtBr: "Estados Unidos", flag: "🇺🇸" },
+      { code: "PAR", namePtBr: "Paraguai", flag: "🇵🇾" },
+      { code: "AUS", namePtBr: "Austrália", flag: "🇦🇺" },
+      { code: "TUR", namePtBr: "Turquia", flag: "🇹🇷" },
     ],
   },
   {
-    code: "BRA",
-    namePtBr: "Brasil",
-    flag: "🇧🇷",
-    players: [
-      "Alisson",
-      "Bento",
-      "Marquinhos",
-      "Éder Militão",
-      "Gabriel Magalhães",
-      "Danilo",
-      "Wesley",
-      "Lucas Paquetá",
-      "Casemiro",
-      "Bruno Guimarães",
-      "Luiz Henrique",
-      "Vinícius Júnior",
-      "Rodrygo",
-      "João Pedro",
-      "Matheus Cunha",
-      "Gabriel Martinelli",
-      "Raphinha",
-      "Estêvão",
+    id: "E",
+    teams: [
+      { code: "GER", namePtBr: "Alemanha", flag: "🇩🇪" },
+      { code: "CUW", namePtBr: "Curaçau", flag: "🇨🇼" },
+      { code: "CIV", namePtBr: "Costa do Marfim", flag: "🇨🇮" },
+      { code: "ECU", namePtBr: "Equador", flag: "🇪🇨" },
     ],
   },
   {
-    code: "URU",
-    namePtBr: "Uruguai",
-    flag: "🇺🇾",
-    players: [
-      "Sergio Rochet",
-      "Ronald Araújo",
-      "José María Giménez",
-      "Sebastián Cáceres",
-      "Matías Viña",
-      "Mathías Olivera",
-      "Manuel Ugarte",
-      "Federico Valverde",
-      "Rodrigo Bentancur",
-      "Nicolás de la Cruz",
-      "Giorgian de Arrascaeta",
-      "Facundo Pellistri",
-      "Darwin Núñez",
-      "Luis Suárez",
+    id: "F",
+    teams: [
+      { code: "NED", namePtBr: "Países Baixos", flag: "🇳🇱" },
+      { code: "JPN", namePtBr: "Japão", flag: "🇯🇵" },
+      { code: "SWE", namePtBr: "Suécia", flag: "🇸🇪" },
+      { code: "TUN", namePtBr: "Tunísia", flag: "🇹🇳" },
     ],
   },
   {
-    code: "COL",
-    namePtBr: "Colômbia",
-    flag: "🇨🇴",
-    players: [
-      "Camilo Vargas",
-      "Daniel Muñoz",
-      "Davinson Sánchez",
-      "Carlos Cuesta",
-      "Johan Mojica",
-      "Jefferson Lerma",
-      "Richard Ríos",
-      "Jhon Arias",
-      "James Rodríguez",
-      "Luis Díaz",
-      "Jhon Córdoba",
-      "Rafael Santos Borré",
+    id: "G",
+    teams: [
+      { code: "BEL", namePtBr: "Bélgica", flag: "🇧🇪" },
+      { code: "EGY", namePtBr: "Egito", flag: "🇪🇬" },
+      { code: "IRI", namePtBr: "Irã", flag: "🇮🇷" },
+      { code: "NZL", namePtBr: "Nova Zelândia", flag: "🇳🇿" },
     ],
   },
   {
-    code: "FRA",
-    namePtBr: "França",
-    flag: "🇫🇷",
-    players: [
-      "Mike Maignan",
-      "Brice Samba",
-      "William Saliba",
-      "Ibrahima Konaté",
-      "Dayot Upamecano",
-      "Theo Hernández",
-      "Jules Koundé",
-      "Benjamin Pavard",
-      "Aurélien Tchouaméni",
-      "Eduardo Camavinga",
-      "Adrien Rabiot",
-      "Warren Zaïre-Emery",
-      "Antoine Griezmann",
-      "Kylian Mbappé",
-      "Ousmane Dembélé",
-      "Marcus Thuram",
-      "Bradley Barcola",
-      "Olivier Giroud",
+    id: "H",
+    teams: [
+      { code: "ESP", namePtBr: "Espanha", flag: "🇪🇸" },
+      { code: "CPV", namePtBr: "Cabo Verde", flag: "🇨🇻" },
+      { code: "KSA", namePtBr: "Arábia Saudita", flag: "🇸🇦" },
+      { code: "URU", namePtBr: "Uruguai", flag: "🇺🇾" },
     ],
   },
   {
-    code: "POR",
-    namePtBr: "Portugal",
-    flag: "🇵🇹",
-    players: [
-      "Diogo Costa",
-      "José Sá",
-      "Rúben Dias",
-      "António Silva",
-      "Gonçalo Inácio",
-      "João Cancelo",
-      "Nuno Mendes",
-      "Diogo Dalot",
-      "João Palhinha",
-      "João Neves",
-      "Vitinha",
-      "Bruno Fernandes",
-      "Bernardo Silva",
-      "Rafael Leão",
-      "Cristiano Ronaldo",
-      "Gonçalo Ramos",
-      "João Félix",
-      "Diogo Jota",
+    id: "I",
+    teams: [
+      { code: "FRA", namePtBr: "França", flag: "🇫🇷" },
+      { code: "SEN", namePtBr: "Senegal", flag: "🇸🇳" },
+      { code: "IRQ", namePtBr: "Iraque", flag: "🇮🇶" },
+      { code: "NOR", namePtBr: "Noruega", flag: "🇳🇴" },
     ],
   },
   {
-    code: "ENG",
-    namePtBr: "Inglaterra",
-    flag: "🏴",
-    players: [
-      "Jordan Pickford",
-      "Aaron Ramsdale",
-      "John Stones",
-      "Marc Guéhi",
-      "Ezri Konsa",
-      "Kyle Walker",
-      "Kieran Trippier",
-      "Trent Alexander-Arnold",
-      "Declan Rice",
-      "Kobbie Mainoo",
-      "Conor Gallagher",
-      "Jude Bellingham",
-      "Phil Foden",
-      "Bukayo Saka",
-      "Cole Palmer",
-      "Anthony Gordon",
-      "Harry Kane",
-      "Ollie Watkins",
+    id: "J",
+    teams: [
+      { code: "ARG", namePtBr: "Argentina", flag: "🇦🇷" },
+      { code: "DZA", namePtBr: "Argélia", flag: "🇩🇿" },
+      { code: "AUT", namePtBr: "Áustria", flag: "🇦🇹" },
+      { code: "JOR", namePtBr: "Jordânia", flag: "🇯🇴" },
     ],
   },
   {
-    code: "ESP",
-    namePtBr: "Espanha",
-    flag: "🇪🇸",
-    players: [
-      "Unai Simón",
-      "David Raya",
-      "Dani Carvajal",
-      "Robin Le Normand",
-      "Aymeric Laporte",
-      "Dean Huijsen",
-      "Alejandro Grimaldo",
-      "Marc Cucurella",
-      "Rodri",
-      "Martín Zubimendi",
-      "Pedri",
-      "Gavi",
-      "Dani Olmo",
-      "Fabián Ruiz",
-      "Lamine Yamal",
-      "Nico Williams",
-      "Álvaro Morata",
-      "Dani Olmo",
+    id: "K",
+    teams: [
+      { code: "POR", namePtBr: "Portugal", flag: "🇵🇹" },
+      { code: "COD", namePtBr: "República Democrática do Congo", flag: "🇨🇩" },
+      { code: "UZB", namePtBr: "Uzbequistão", flag: "🇺🇿" },
+      { code: "COL", namePtBr: "Colômbia", flag: "🇨🇴" },
     ],
   },
   {
-    code: "GER",
-    namePtBr: "Alemanha",
-    flag: "🇩🇪",
-    players: [
-      "Marc-André ter Stegen",
-      "Oliver Baumann",
-      "Antonio Rüdiger",
-      "Jonathan Tah",
-      "Nico Schlotterbeck",
-      "Waldemar Anton",
-      "Joshua Kimmich",
-      "David Raum",
-      "Maximilian Mittelstädt",
-      "Robert Andrich",
-      "Toni Kroos",
-      "Pascal Groß",
-      "Ilkay Gündogan",
-      "Florian Wirtz",
-      "Jamal Musiala",
-      "Leroy Sané",
-      "Kai Havertz",
-      "Niclas Füllkrug",
-    ],
-  },
-  {
-    code: "MAR",
-    namePtBr: "Marrocos",
-    flag: "🇲🇦",
-    players: [
-      "Yassine Bounou",
-      "Munir Mohamedi",
-      "Achraf Hakimi",
-      "Nayef Aguerd",
-      "Romain Saïss",
-      "Chadi Riad",
-      "Yahia Attiyat Allah",
-      "Sofyan Amrabat",
-      "Azzedine Ounahi",
-      "Bilal El Khannouss",
-      "Hakim Ziyech",
-      "Brahim Díaz",
-      "Amine Adli",
-      "Youssef En-Nesyri",
-      "Ayoub El Kaabi",
-      "Soufiane Rahimi",
-    ],
-  },
-  {
-    code: "SEN",
-    namePtBr: "Senegal",
-    flag: "🇸🇳",
-    players: [
-      "Édouard Mendy",
-      "Kalidou Koulibaly",
-      "Abdou Diallo",
-      "Moussa Niakhaté",
-      "Ismail Jakobs",
-      "Formose Mendy",
-      "Idrissa Gueye",
-      "Pape Matar Sarr",
-      "Lamine Camara",
-      "Pathé Ciss",
-      "Sadio Mané",
-      "Ismaïla Sarr",
-      "Nicolas Jackson",
-      "Iliman Ndiaye",
-    ],
-  },
-  {
-    code: "ITA",
-    namePtBr: "Itália",
-    flag: "🇮🇹",
-    players: [
-      "Gianluigi Donnarumma",
-      "Guglielmo Vicario",
-      "Alessandro Bastoni",
-      "Gianluca Mancini",
-      "Alessandro Buongiorno",
-      "Riccardo Calafiori",
-      "Federico Dimarco",
-      "Giovanni Di Lorenzo",
-      "Nicolò Barella",
-      "Davide Frattesi",
-      "Bryan Cristante",
-      "Lorenzo Pellegrini",
-      "Federico Chiesa",
-      "Mattia Zaccagni",
-      "Gianluca Scamacca",
-      "Mateo Retegui",
-    ],
-  },
-  {
-    code: "NED",
-    namePtBr: "Países Baixos",
-    flag: "🇳🇱",
-    players: [
-      "Bart Verbruggen",
-      "Mark Flekken",
-      "Virgil van Dijk",
-      "Nathan Aké",
-      "Matthijs de Ligt",
-      "Stefan de Vrij",
-      "Denzel Dumfries",
-      "Jeremie Frimpong",
-      "Tijjani Reijnders",
-      "Jerdy Schouten",
-      "Joey Veerman",
-      "Xavi Simons",
-      "Cody Gakpo",
-      "Donyell Malen",
-      "Memphis Depay",
-      "Wout Weghorst",
-    ],
-  },
-  {
-    code: "KOR",
-    namePtBr: "Coreia do Sul",
-    flag: "🇰🇷",
-    players: [
-      "Kim Jo-hyeon",
-      "Kim Min-jae",
-      "Kim Young-gwon",
-      "Kim Jin-su",
-      "Cho Yu-min",
-      "Hwang In-beom",
-      "Lee Kang-in",
-      "Lee Jae-sung",
-      "Myungjae Lee",
-      "Son Heung-min",
-      "Hwang Hee-chan",
-      "Cho Gue-sung",
-    ],
-  },
-  {
-    code: "JPN",
-    namePtBr: "Japão",
-    flag: "🇯🇵",
-    players: [
-      "Zion Suzuki",
-      "Keisuke Osako",
-      "Ko Itakura",
-      "Shogo Taniguchi",
-      "Koki Machida",
-      "Yukinari Sugawara",
-      "Hiroki Ito",
-      "Wataru Endo",
-      "Hidemasa Morita",
-      "Ao Tanaka",
-      "Takefusa Kubo",
-      "Ritsu Doan",
-      "Kaoru Mitoma",
-      "Keito Nakamura",
-      "Takumi Minamino",
-      "Ayase Ueda",
-      "Daizen Maeda",
-    ],
-  },
-  {
-    code: "AUS",
-    namePtBr: "Austrália",
-    flag: "🇦🇺",
-    players: [
-      "Mathew Ryan",
-      "Harry Souttar",
-      "Kye Rowles",
-      "Aziz Behich",
-      "Gethin Jones",
-      "Jackson Irvine",
-      "Connor Metcalfe",
-      "Keanu Baccus",
-      "Riley McGree",
-      "Craig Goodwin",
-      "Mitchell Duke",
-      "Kusini Yengi",
-    ],
-  },
-  {
-    code: "NZL",
-    namePtBr: "Nova Zelândia",
-    flag: "🇳🇿",
-    players: [
-      "Oliver Sail",
-      "Michael Boxall",
-      "Nando Pijnaker",
-      "Liberato Cacace",
-      "Tommy Smith",
-      "Joe Bell",
-      "Matthew Garbett",
-      "Sarpreet Singh",
-      "Chris Wood",
-      "Ben Waine",
-    ],
-  },
-  {
-    code: "ECU",
-    namePtBr: "Equador",
-    flag: "🇪🇨",
-    players: [
-      "Alexander Domínguez",
-      "Piero Hincapié",
-      "Willian Pacho",
-      "Félix Torres",
-      "Angelo Preciado",
-      "Pervis Estupiñán",
-      "Moisés Caicedo",
-      "Alan Franco",
-      "Kendry Páez",
-      "Jeremy Sarmiento",
-      "Enner Valencia",
-      "Kevin Rodríguez",
-    ],
-  },
-  {
-    code: "SCO",
-    namePtBr: "Escócia",
-    flag: "🏴",
-    players: [
-      "Angus Gunn",
-      "Jack Hendry",
-      "Scott McKenna",
-      "Ryan Porteous",
-      "Andrew Robertson",
-      "Anthony Ralston",
-      "Billy Gilmour",
-      "Scott McTominay",
-      "John McGinn",
-      "Callum McGregor",
-      "Che Adams",
-      "Lawrence Shankland",
-    ],
-  },
-  {
-    code: "SUI",
-    namePtBr: "Suíça",
-    flag: "🇨🇭",
-    players: [
-      "Yann Sommer",
-      "Gregor Kobel",
-      "Manuel Akanji",
-      "Fabian Schär",
-      "Ricardo Rodríguez",
-      "Silvan Widmer",
-      "Granit Xhaka",
-      "Remo Freuler",
-      "Denis Zakaria",
-      "Xherdan Shaqiri",
-      "Dan Ndoye",
-      "Breel Embolo",
-    ],
-  },
-  {
-    code: "AUT",
-    namePtBr: "Áustria",
-    flag: "🇦🇹",
-    players: [
-      "Patrick Pentz",
-      "Kevin Danso",
-      "Maximilian Wöber",
-      "Stefan Posch",
-      "Philipp Mwene",
-      "Nicolas Seiwald",
-      "Konrad Laimer",
-      "Marcel Sabitzer",
-      "Christoph Baumgartner",
-      "Patrick Wimmer",
-      "Michael Gregoritsch",
-      "Marko Arnautović",
-    ],
-  },
-  {
-    code: "PAR",
-    namePtBr: "Paraguai",
-    flag: "🇵🇾",
-    players: [
-      "Carlos Coronel",
-      "Gustavo Gómez",
-      "Omar Alderete",
-      "Fabian Balbuena",
-      "Matías Espinoza",
-      "Andrés Cubas",
-      "Mathías Villasanti",
-      "Diego Gómez",
-      "Miguel Almirón",
-      "Julio Enciso",
-      "Ramón Sosa",
-      "Adam Bareiro",
-    ],
-  },
-  {
-    code: "CHI",
-    namePtBr: "Chile",
-    flag: "🇨🇱",
-    players: [
-      "Brayan Cortés",
-      "Guillermo Maripán",
-      "Paulo Díaz",
-      "Matías Catalán",
-      "Gabriel Suazo",
-      "Mauricio Isla",
-      "Rodrigo Echeverría",
-      "Marcelino Núñez",
-      "Diego Valdés",
-      "Alexis Sánchez",
-      "Eduardo Vargas",
-      "Victor Dávila",
-    ],
-  },
-  {
-    code: "VEN",
-    namePtBr: "Venezuela",
-    flag: "🇻🇪",
-    players: [
-      "Rafael Romo",
-      "Nahuel Ferraresi",
-      "Yordan Osorio",
-      "Jon Aramburu",
-      "Miguel Navarro",
-      "José Martínez",
-      "Yangel Herrera",
-      "Cristian Cásseres",
-      "Soteldo",
-      "Jefferson Savarino",
-      "Salomón Rondón",
-      "Jhonder Cádiz",
-    ],
-  },
-  {
-    code: "EGY",
-    namePtBr: "Egito",
-    flag: "🇪🇬",
-    players: [
-      "Mohamed El Shenawy",
-      "Mohamed Abdelmonem",
-      "Ahmed Hegazi",
-      "Mohamed Hany",
-      "Mohamed Hamdi",
-      "Marwan Attia",
-      "Hamdi Fathi",
-      "Imam Ashour",
-      "Trezeguet",
-      "Mohamed Salah",
-      "Mostafa Mohamed",
-      "Omar Marmoush",
-    ],
-  },
-  {
-    code: "NGA",
-    namePtBr: "Nigéria",
-    flag: "🇳🇬",
-    players: [
-      "Stanley Nwabali",
-      "William Troost-Ekong",
-      "Calvin Bassey",
-      "Semi Ajayi",
-      "Ola Aina",
-      "Zaidu Sanusi",
-      "Wilfred Ndidi",
-      "Alex Iwobi",
-      "Frank Onyeka",
-      "Ademola Lookman",
-      "Victor Osimhen",
-      "Victor Boniface",
-    ],
-  },
-  {
-    code: "CRO",
-    namePtBr: "Croácia",
-    flag: "🇭🇷",
-    players: [
-      "Dominik Livaković",
-      "Joško Gvardiol",
-      "Josip Šutalo",
-      "Domagoj Vida",
-      "Josip Stanišić",
-      "Borna Sosa",
-      "Marcelo Brozović",
-      "Mateo Kovačić",
-      "Luka Modrić",
-      "Mario Pašalić",
-      "Lovro Majer",
-      "Luka Sučić",
-      "Andrej Kramarić",
-      "Bruno Petković",
-      "Ivan Perišić",
-    ],
-  },
-  {
-    code: "DEN",
-    namePtBr: "Dinamarca",
-    flag: "🇩🇰",
-    players: [
-      "Kasper Schmeichel",
-      "Joachim Andersen",
-      "Jannik Vestergaard",
-      "Andreas Christensen",
-      "Alexander Bah",
-      "Joakim Mæhle",
-      "Pierre-Emile Højbjerg",
-      "Thomas Delaney",
-      "Christian Eriksen",
-      "Morten Hjulmand",
-      "Andreas Skov Olsen",
-      "Rasmus Højlund",
-      "Jonas Wind",
-    ],
-  },
-  {
-    code: "TRI",
-    namePtBr: "Trinidad e Tobago",
-    flag: "🇹🇹",
-    players: [
-      "Denzil Smith",
-      "Aubrey David",
-      "Alvin Jones",
-      "Justin Garcia",
-      "Shannon Gomez",
-      "Neveal Hackshaw",
-      "Ajani Fortune",
-      "Noah Powder",
-      "Levi García",
-      "Real Gill",
-      "Malcolm Shaw",
-    ],
-  },
-  {
-    code: "CRC",
-    namePtBr: "Costa Rica",
-    flag: "🇨🇷",
-    players: [
-      "Kevin Chamorro",
-      "Juan Pablo Vargas",
-      "Francisco Calvo",
-      "Jeyland Mitchell",
-      "Haxzel Quirós",
-      "Orlando Galo",
-      "Jefferson Brenes",
-      "Brandon Aguilera",
-      "Josimar Alcócer",
-      "Manfred Ugalde",
-      "Warren Madrigal",
-    ],
-  },
-  {
-    code: "PAN",
-    namePtBr: "Panamá",
-    flag: "🇵🇦",
-    players: [
-      "Orlando Mosquera",
-      "José Córdoba",
-      "Edgardo Fariña",
-      "Michael Murillo",
-      "Eric Davis",
-      "Adalberto Carrasquilla",
-      "Cristian Martínez",
-      "Edgar Bárcenas",
-      "José Luis Rodríguez",
-      "Ismael Díaz",
-      "José Fajardo",
-    ],
-  },
-  {
-    code: "ALG",
-    namePtBr: "Argélia",
-    flag: "🇩🇿",
-    players: [
-      "Anthony Mandrea",
-      "Aïssa Mandi",
-      "Ramy Bensebaini",
-      "Rayan Aït-Nouri",
-      "Youcef Atal",
-      "Ismaël Bennacer",
-      "Ramiz Zerrouki",
-      "Houssem Aouar",
-      "Riyad Mahrez",
-      "Amine Gouiri",
-      "Saïd Benrahma",
-      "Baghdad Bounedjah",
-    ],
-  },
-  {
-    code: "TUN",
-    namePtBr: "Tunísia",
-    flag: "🇹🇳",
-    players: [
-      "Bechir Ben Saïd",
-      "Montassar Talbi",
-      "Yassine Meriah",
-      "Ali Abdi",
-      "Yan Valery",
-      "Ellyes Skhiri",
-      "Aïssa Laïdouni",
-      "Hamza Rafia",
-      "Elias Achouri",
-      "Sayfallah Ltaief",
-      "Youssef Msakni",
-    ],
-  },
-  {
-    code: "KSA",
-    namePtBr: "Arábia Saudita",
-    flag: "🇸🇦",
-    players: [
-      "Mohammed Al-Owais",
-      "Ali Lajami",
-      "Ali Al-Bulaihi",
-      "Saud Abdulhamid",
-      "Yasser Al-Shahrani",
-      "Abdulelah Al-Malki",
-      "Mohamed Kanno",
-      "Faisal Al-Ghamdi",
-      "Salem Al-Dawsari",
-      "Abdulrahman Ghareeb",
-      "Firas Al-Buraikan",
-      "Saleh Al-Shehri",
+    id: "L",
+    teams: [
+      { code: "ENG", namePtBr: "Inglaterra", flag: "🏴" },
+      { code: "CRO", namePtBr: "Croácia", flag: "🇭🇷" },
+      { code: "GHA", namePtBr: "Gana", flag: "🇬🇭" },
+      { code: "PAN", namePtBr: "Panamá", flag: "🇵🇦" },
     ],
   },
 ];
 
-// Seção Coca-Cola (CCO) — craques brasileiros, controlados à parte.
-const COCA_COLA_PLAYERS = [
-  "Alisson",
-  "Marquinhos",
-  "Danilo",
-  "Lucas Paquetá",
-  "Bruno Guimarães",
-  "Vinícius Júnior",
-  "Rodrygo",
-  "Neymar Jr.",
-];
+// Lê o jogadores.txt e monta um mapa: CÓDIGO -> { posição: nome }.
+// Aceita linhas no formato "BRA15: Rodrygo" ou "BRA15 = Rodrygo".
+function parseRoster(raw: string): Record<string, Record<number, string>> {
+  const map: Record<string, Record<number, string>> = {};
 
-function createTeamStickers(team: TeamSeed): StickerDefinition[] {
-  return team.players.map((name, index) => ({
-    id: `${team.code}${index + 1}`,
-    code: `${team.code}${index + 1}`,
-    label: name,
-    kind: "player",
-    order: index + 1,
-    countryCode: team.code,
-    countryName: team.namePtBr,
-    countryFlag: team.flag,
-    groupId: team.code,
-    sectionId: team.code,
-  }));
+  for (const line of raw.split(/\r?\n/)) {
+    const match = line.trim().match(/^([A-Za-z]+)\s*(\d+)\s*[:=]\s*(.+)$/);
+    if (!match) {
+      continue;
+    }
+
+    const [, rawCode, posStr, name] = match;
+    const code = rawCode.toUpperCase();
+    const cleanName = name.trim();
+
+    if (!cleanName) {
+      continue;
+    }
+
+    if (!map[code]) {
+      map[code] = {};
+    }
+    map[code][Number(posStr)] = cleanName;
+  }
+
+  return map;
 }
 
-// Cada seleção vira uma "aba" própria (um grupo com um país).
-export const albumGroups: GroupSection[] = TEAMS.map((team) => ({
-  id: team.code,
-  name: team.namePtBr,
-  countries: [
-    {
-      code: team.code,
-      namePtBr: team.namePtBr,
-      flag: team.flag,
-      groupId: team.code,
-      stickers: createTeamStickers(team),
-    },
-  ],
+const roster = parseRoster(rosterRaw);
+
+// Cada seleção tem 20 figurinhas: #1 = Escudo, #13 = Time, o resto são jogadores.
+const TEAM_STICKER_COUNT = 20;
+
+function createTeamStickers(team: TeamMeta, groupId: string): StickerDefinition[] {
+  const players = roster[team.code] ?? {};
+  const stickers: StickerDefinition[] = [];
+
+  for (let pos = 1; pos <= TEAM_STICKER_COUNT; pos += 1) {
+    let label: string;
+    let kind: StickerKind;
+
+    if (pos === 1) {
+      label = "Escudo";
+      kind = "team";
+    } else if (pos === 13) {
+      label = "Time";
+      kind = "team";
+    } else {
+      label = players[pos] ?? `#${pos}`;
+      kind = "player";
+    }
+
+    stickers.push({
+      id: `${team.code}${pos}`,
+      code: `${team.code}${pos}`,
+      label,
+      kind,
+      order: pos,
+      countryCode: team.code,
+      countryName: team.namePtBr,
+      countryFlag: team.flag,
+      groupId,
+      sectionId: team.code,
+    });
+  }
+
+  return stickers;
+}
+
+export const albumGroups: GroupSection[] = GROUPS.map((group) => ({
+  id: group.id,
+  name: `Grupo ${group.id}`,
+  countries: group.teams.map((team) => ({
+    code: team.code,
+    namePtBr: team.namePtBr,
+    flag: team.flag,
+    groupId: group.id,
+    stickers: createTeamStickers(team, group.id),
+  })),
 }));
 
-export const cocaColaSection: StickerDefinition[] = COCA_COLA_PLAYERS.map((name, index) => ({
-  id: `CCO${index + 1}`,
-  code: `CCO${index + 1}`,
-  label: name,
-  kind: "coca",
-  order: index + 1,
-  countryName: "Brasil",
-  countryFlag: "🇧🇷",
-  groupId: "COCA",
-  sectionId: "COCA",
-}));
+// Seção Coca-Cola (CC) — craques, sem escudo/time.
+const cocaRoster = roster.CC ?? {};
+export const cocaColaSection: StickerDefinition[] = Object.keys(cocaRoster)
+  .map(Number)
+  .sort((a, b) => a - b)
+  .map((pos) => ({
+    id: `CC${pos}`,
+    code: `CC${pos}`,
+    label: cocaRoster[pos],
+    kind: "coca",
+    order: pos,
+    groupId: "COCA",
+    sectionId: "COCA",
+  }));
 
 // Figurinhas históricas (FWC) — formato horizontal, exibidas após a Coca-Cola.
 // Os rótulos abaixo são provisórios; serão substituídos pelos nomes oficiais.
